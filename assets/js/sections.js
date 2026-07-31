@@ -80,8 +80,9 @@
     measure();
     window.addEventListener('resize', measure, { passive: true });
 
-    /* gentler pace when the user prefers reduced motion */
-    function speed() { return C.motion.enabled ? 0.55 : 0.25; }
+    /* ~36 px/s normally, ~27 px/s under reduced motion: clearly in motion in
+       both cases, still slow enough to read without chasing the text */
+    function speed() { return C.motion.enabled ? 0.6 : 0.45; }
 
     function loop() {
       if (paused) return;
