@@ -1,0 +1,444 @@
+/* ==========================================================================
+   effects.css — motion & hover layer.
+
+   Loaded LAST on purpose: it enhances components defined elsewhere without
+   fighting them. Everything here animates transform / opacity / colour only,
+   and the whole file is neutralised under prefers-reduced-motion at the end.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. AMBIENT — a brighter, living ground
+   ========================================================================== */
+
+.ground {
+  background:
+    radial-gradient(80vw 60vh at 12% -5%, rgba(76, 141, 255, 0.20), transparent 60%),
+    radial-gradient(70vw 55vh at 92% 8%, rgba(155, 123, 255, 0.18), transparent 60%),
+    radial-gradient(65vw 50vh at 50% 105%, rgba(47, 227, 245, 0.12), transparent 60%),
+    linear-gradient(180deg, var(--ink-850) 0%, var(--ink-900) 55%, var(--ink-850) 100%);
+}
+
+.ground-wash {
+  opacity: 0.9;
+  background:
+    radial-gradient(46vw 46vh at 78% 14%, hsl(var(--wash-h, 224) 95% 62% / 0.20), transparent 66%),
+    radial-gradient(38vw 38vh at 16% 78%, hsl(calc(var(--wash-h, 224) + 40) 95% 62% / 0.14), transparent 66%);
+}
+
+/* slow aurora drift behind everything */
+@keyframes aurora-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2%, -2%, 0) scale(1.07); }
+  100% { transform: translate3d(-1%, 1%, 0) scale(1.03); }
+}
+
+.ground-wash { animation: aurora-drift 28s ease-in-out infinite alternate; }
+
+/* ==========================================================================
+   2. SIGNATURE ANIMATIONS
+   ========================================================================== */
+
+@keyframes sheen {
+  0%   { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(320%) skewX(-18deg); }
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 currentColor; opacity: 0.7; }
+  70%  { box-shadow: 0 0 0 10px transparent; opacity: 0; }
+  100% { box-shadow: 0 0 0 0 transparent; opacity: 0; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+@keyframes hue-slide {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+
+@keyframes bar-dance {
+  0%, 100% { transform: scaleY(0.35); }
+  50%      { transform: scaleY(1); }
+}
+
+@keyframes ripple-out {
+  from { transform: translate(-50%, -50%) scale(0); opacity: 0.55; }
+  to   { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+}
+
+/* --- gradient headline ---------------------------------------------------- */
+.hero h1 em {
+  background: linear-gradient(100deg,
+    var(--blue-bright) 0%, var(--cyan) 22%, var(--violet) 44%,
+    var(--blue-bright) 66%, var(--cyan) 88%, var(--violet) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: hue-slide 9s linear infinite;
+}
+
+/* --- the live dot actually pulses ---------------------------------------- */
+.console__dot { position: relative; color: var(--amber); }
+
+.console__dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: pulse-ring 2.2s ease-out infinite;
+}
+
+/* --- brand mark breathes on hover ---------------------------------------- */
+.brand__mark {
+  transition: transform var(--d-base) var(--ease-spring),
+    border-color var(--d-base) linear, box-shadow var(--d-base) linear;
+}
+
+.brand:hover .brand__mark {
+  transform: rotate(-8deg) scale(1.12);
+  border-color: var(--blue);
+  box-shadow: var(--glow-blue);
+}
+
+.brand__mark path { transition: stroke var(--d-base) linear; }
+.brand:hover .brand__mark path { stroke: var(--cyan); }
+
+/* ==========================================================================
+   3. BUTTONS — sheen sweep + lift + glow
+   ========================================================================== */
+
+.btn { overflow: hidden; isolation: isolate; }
+
+.btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  bottom: -50%;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.btn:hover::after { animation: sheen 720ms var(--ease-out); }
+
+.btn--primary:hover {
+  box-shadow: 0 14px 34px -12px var(--blue), var(--glow-blue);
+}
+
+.btn--warm:hover {
+  background: color-mix(in srgb, var(--amber) 22%, transparent);
+  box-shadow: var(--glow-amber);
+}
+
+.btn--quiet:hover { box-shadow: var(--glow-cyan); border-color: var(--cyan); }
+
+/* click ripple, injected by effects.js */
+.ripple {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  animation: ripple-out 620ms var(--ease-out) forwards;
+  z-index: -1;
+}
+
+/* ==========================================================================
+   4. CARDS & PANELS — lift, glow, gradient edge, icon reaction
+   ========================================================================== */
+
+/* The animated gradient edge goes on the course-info panels, which are the
+   card-like surfaces in this layout. */
+.fact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(130deg, var(--blue), var(--cyan), var(--violet), var(--blue));
+  background-size: 220% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--d-base) linear;
+  pointer-events: none;
+}
+
+.fact:hover::before { opacity: 1; animation: hue-slide 3.5s linear infinite; }
+
+/* the game shell and the score rail lift subtly too */
+.game,
+.rail,
+.skill-detail {
+  transition: border-color var(--d-base) linear, box-shadow var(--d-base) linear;
+}
+
+.game:hover,
+.rail:hover,
+.skill-detail:hover {
+  border-color: color-mix(in srgb, var(--blue) 45%, var(--rule));
+  box-shadow: var(--sh-2), var(--glow-blue);
+}
+
+/* --- method steps --------------------------------------------------------- */
+.step {
+  transition: opacity var(--d-slow) linear, transform var(--d-base) var(--ease-out),
+    border-color var(--d-base) linear;
+  cursor: default;
+}
+
+.step:hover { transform: translateX(6px); border-top-color: var(--blue); opacity: 1; }
+.step:hover .step__idx { color: var(--cyan); }
+.step__idx { transition: color var(--d-base) linear, transform var(--d-base) var(--ease-spring); }
+.step:hover .step__idx { transform: scale(1.2); }
+
+/* --- 1-on-1 facts --------------------------------------------------------- */
+.fact {
+  position: relative;
+  transition: background var(--d-base) linear, transform var(--d-base) var(--ease-out);
+}
+
+.fact::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan), var(--violet));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--d-base) var(--ease-out);
+}
+
+.fact:hover { background: var(--ink-600); }
+.fact:hover::after { transform: scaleX(1); }
+.fact dd { transition: color var(--d-base) linear, transform var(--d-base) var(--ease-out); }
+.fact:hover dd { color: var(--cyan); transform: translateX(3px); }
+
+/* --- outcomes -------------------------------------------------------------- */
+.outcome {
+  transition: transform var(--d-base) var(--ease-out), border-color var(--d-base) linear;
+}
+
+.outcome:hover { transform: translateX(8px); border-bottom-color: var(--amber); }
+.outcome__k { transition: transform var(--d-base) var(--ease-spring), color var(--d-base) linear; }
+.outcome:hover .outcome__k { transform: scale(1.25) rotate(-6deg); color: var(--coral); }
+.outcome h3 { transition: color var(--d-base) linear; }
+.outcome:hover h3 { color: var(--amber); }
+
+/* --- contrast columns ------------------------------------------------------ */
+.column li {
+  transition: color var(--d-base) linear, transform var(--d-base) var(--ease-out),
+    border-color var(--d-base) linear;
+}
+
+.column li:hover { transform: translateX(5px); border-bottom-color: var(--blue); }
+.column--goal li:hover { color: var(--paper); border-bottom-color: var(--amber); }
+.column--goal li:hover i { transform: translateX(3px); }
+.column li i { transition: transform var(--d-base) var(--ease-out); display: inline-block; }
+
+/* --- hero trust indicators -------------------------------------------------- */
+.hero__trust b {
+  display: inline-block;
+  transition: transform var(--d-base) var(--ease-spring), color var(--d-base) linear,
+    text-shadow var(--d-base) linear;
+  cursor: default;
+}
+
+.hero__trust b:hover {
+  transform: translateY(-3px);
+  color: var(--cyan);
+  text-shadow: 0 0 16px rgba(47, 227, 245, 0.55);
+}
+
+.hero__tag { transition: border-color var(--d-base) linear, box-shadow var(--d-base) linear; }
+.hero__tag:hover { border-color: var(--amber); box-shadow: var(--glow-amber); }
+
+/* --- floating skill chips in the hero -------------------------------------- */
+.stage__chip {
+  transition: transform var(--d-base) var(--ease-spring), color var(--d-base) linear,
+    border-color var(--d-base) linear, box-shadow var(--d-base) linear;
+}
+
+.stage__chip:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* gentle idle float, staggered so they don't move in lockstep */
+.stage__chip--a { animation: float-y 6s ease-in-out infinite; }
+.stage__chip--b { animation: float-y 7.5s ease-in-out infinite 0.6s; }
+.stage__chip--c { animation: float-y 6.8s ease-in-out infinite 1.2s; }
+.stage__chip--d { animation: float-y 8s ease-in-out infinite 0.3s; }
+
+/* --- orbiting vocabulary ---------------------------------------------------- */
+.word {
+  transition: color var(--d-fast) linear, border-color var(--d-fast) linear,
+    box-shadow var(--d-fast) linear, background var(--d-fast) linear;
+}
+
+.word:hover,
+.word:focus-visible {
+  color: var(--amber);
+  border-color: var(--amber);
+  background: var(--ink-600);
+  box-shadow: var(--glow-amber);
+}
+
+/* --- the hero console ------------------------------------------------------- */
+.console { transition: box-shadow var(--d-slow) linear, border-color var(--d-slow) linear; }
+.console:hover { border-color: color-mix(in srgb, var(--blue) 55%, var(--rule)); box-shadow: var(--sh-3), var(--glow-blue); }
+
+/* ==========================================================================
+   5. LESSON, SKILLS, GAMES
+   ========================================================================== */
+
+.turn { transition: transform var(--d-base) var(--ease-out); }
+.turn:hover { transform: translateX(4px); }
+.turn__bullet { transition: transform var(--d-base) var(--ease-spring), box-shadow var(--d-base) linear; }
+.turn:hover .turn__bullet { transform: scale(1.35) rotate(45deg); box-shadow: var(--glow-blue); }
+
+.reply { position: relative; }
+.reply:hover:not([disabled]) { box-shadow: var(--glow-blue); background: var(--ink-600); }
+.reply:hover:not([disabled]) .en { color: var(--blue-bright); }
+.reply .en { transition: color var(--d-base) linear; }
+
+.skill__en { transition: transform var(--d-base) var(--ease-out), color var(--d-base) linear; }
+.skill:hover .skill__en { transform: translateX(5px); color: var(--cyan); }
+
+/* the little equaliser dances while its row is active */
+.skill.is-on .skill__bars i { animation: bar-dance 1.1s ease-in-out infinite; }
+.skill.is-on .skill__bars i:nth-child(2) { animation-delay: 0.12s; }
+.skill.is-on .skill__bars i:nth-child(3) { animation-delay: 0.24s; }
+.skill.is-on .skill__bars i:nth-child(4) { animation-delay: 0.36s; }
+.skill.is-on .skill__bars i:nth-child(5) { animation-delay: 0.48s; }
+
+.tab { position: relative; transition: color var(--d-fast) linear, background var(--d-fast) linear, transform var(--d-fast) var(--ease-out); }
+.tab:hover { transform: translateY(-2px); }
+
+.tab::after {
+  content: "";
+  position: absolute;
+  left: 12%; right: 12%; bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  transform: scaleX(0);
+  transition: transform var(--d-base) var(--ease-out);
+}
+
+.tab:hover::after,
+.tab[aria-selected="true"]::after { transform: scaleX(1); }
+
+.option { position: relative; }
+.option:hover:not([disabled]) { background: var(--ink-500); box-shadow: var(--glow-blue); }
+.option:hover:not([disabled]) .option__key { color: var(--cyan); border-color: var(--cyan); transform: scale(1.1); }
+.option__key { transition: color var(--d-fast) linear, border-color var(--d-fast) linear, transform var(--d-fast) var(--ease-spring); }
+
+.tile:hover:not([disabled]) { box-shadow: var(--glow-blue); background: var(--ink-500); }
+
+.stars i:hover { transform: scale(1.25) rotate(12deg); }
+
+/* score number gets a soft glow as it climbs */
+.score__n { transition: color var(--d-base) linear, text-shadow var(--d-base) linear; }
+.score__n.is-bumped { color: var(--amber); text-shadow: 0 0 18px rgba(255, 197, 61, 0.6); }
+
+/* ==========================================================================
+   6. FORM, FAQ, QR, FOOTER, STRIP
+   ========================================================================== */
+
+.field input,
+.field select { transition: border-color var(--d-fast) linear, box-shadow var(--d-fast) linear, background var(--d-fast) linear; }
+.field input:hover, .field select:hover { border-color: var(--blue); box-shadow: var(--glow-blue); }
+.field input:focus, .field select:focus { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.field label { transition: color var(--d-fast) linear; }
+.field:hover label { color: var(--cyan); }
+
+.faq summary { transition: color var(--d-fast) linear, padding-left var(--d-base) var(--ease-out); }
+.faq summary:hover { padding-left: var(--s-3); color: var(--cyan); }
+.faq summary::after { transition: transform var(--d-base) var(--ease-out), border-color var(--d-fast) linear; }
+.faq summary:hover::after { border-color: var(--cyan); }
+.faq details[open] summary { color: var(--blue-bright); }
+
+.qr { transition: transform var(--d-base) var(--ease-out), box-shadow var(--d-base) linear, border-color var(--d-base) linear; }
+.qr:hover { transform: scale(1.035); border-color: var(--amber); box-shadow: var(--glow-amber); }
+
+.wechat-id { transition: border-color var(--d-base) linear, box-shadow var(--d-base) linear; }
+.wechat-id:hover { border-color: var(--amber); box-shadow: var(--glow-amber); }
+
+.strip__item { transition: color var(--d-fast) linear, transform var(--d-fast) var(--ease-out); }
+.strip__item:hover { color: var(--cyan); transform: translateY(-2px); }
+.strip__item path { transition: stroke var(--d-fast) linear; }
+.strip__item:hover path { stroke: var(--cyan); }
+
+.footer a { transition: color var(--d-fast) linear, transform var(--d-fast) var(--ease-out); display: inline-block; }
+.footer nav a:hover { color: var(--cyan); transform: translateY(-2px); }
+
+.nav__link::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+
+.divider { transition: background-color var(--d-slow) linear; }
+
+/* ==========================================================================
+   7. 3D TILT (driven by effects.js; --rx/--ry are set per element)
+   ========================================================================== */
+
+.tilt {
+  transform: perspective(760px)
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg))
+    translateY(var(--lift, 0px));
+  transition: transform var(--d-base) var(--ease-out);
+  transform-style: preserve-3d;
+}
+
+.tilt.is-tilting { transition: transform 90ms linear; }
+
+/* the QR also scales on hover; compose both instead of letting them fight */
+.qr.tilt:hover {
+  transform: perspective(760px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1.035);
+}
+
+/* ==========================================================================
+   8. REDUCED MOTION — strip every animation, keep every hover colour cue
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .ground-wash,
+  .hero h1 em,
+  .console__dot::after,
+  .stage__chip--a, .stage__chip--b, .stage__chip--c, .stage__chip--d,
+  .skill.is-on .skill__bars i,
+  .btn:hover::after,
+  .fact:hover::before {
+    animation: none !important;
+  }
+
+  /* the gradient headline needs a solid colour when it cannot animate */
+  .hero h1 em {
+    background: none;
+    -webkit-text-fill-color: var(--blue-bright);
+    color: var(--blue-bright);
+  }
+
+  .tilt { transform: none !important; }
+  .ripple { display: none !important; }
+
+  /* movement-based hovers collapse to colour-only, which still reads clearly */
+  .outcome:hover, .step:hover, .column li:hover, .hero__trust b:hover,
+  .turn:hover, .tab:hover, .qr:hover, .footer nav a:hover,
+  .strip__item:hover, .skill:hover .skill__en, .fact:hover dd {
+    transform: none !important;
+  }
+}
+
+:root[data-motion="off"] .tilt { transform: none !important; }

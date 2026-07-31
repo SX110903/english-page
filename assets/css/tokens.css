@@ -1,50 +1,59 @@
 /* ==========================================================================
-   Design tokens — 声波 (waveform) visual system
-   Dark editorial ground; warm hues are reserved for reward / correct / accent.
+   Design tokens — 声波 (waveform) visual system, luminous edition.
+   Cool spectrum carries the page; warm hues mark reward / correct / accent.
    ========================================================================== */
 
 :root {
-  /* --- ground & surfaces ------------------------------------------------ */
-  --ink-900: #05080F;
-  --ink-850: #070C1B;
-  --ink-800: #0A1122;
-  --ink-700: #0E1730;
-  --ink-600: #131E3D;
-  --ink-500: #1B2950;
+  /* --- ground & surfaces (richer blue, so bright accents pop) ----------- */
+  --ink-900: #04081A;
+  --ink-850: #080E24;
+  --ink-800: #0C1430;
+  --ink-700: #121D42;
+  --ink-600: #182554;
+  --ink-500: #223068;
 
   /* --- line & text ------------------------------------------------------ */
-  --paper: #EAF0FF;
-  --paper-dim: #C2CDE6;
-  --muted: #8E9CBE;
-  --muted-deep: #64719239;
+  --paper: #F2F6FF;
+  --paper-dim: #D3DEF8;
+  --muted: #9DAED4;
+  --muted-deep: #647192aa;
 
-  --rule: #1E2B4E;
-  --rule-soft: #16213C;
+  --rule: #27386A;
+  --rule-soft: #1B2850;
 
   /* --- cool spectrum (primary) ------------------------------------------ */
-  --blue: #3E7BFA;
-  --blue-bright: #5B92FF;
-  --blue-deep: #1D4ED8;
-  --indigo: #4F46E5;
-  --violet: #7C5CFF;
+  --blue: #4C8DFF;
+  --blue-bright: #7DB2FF;
+  --blue-deep: #2563EB;
+  --indigo: #6366F1;
+  --violet: #9B7BFF;
+  --cyan: #2FE3F5;
+  --pink: #FF6DAE;
 
   /* --- warm spectrum (rewards / correct / highlight / secondary CTA) ---- */
-  --coral: #FF6B4A;
-  --amber: #FFB020;
-  --amber-soft: #FFD79A;
+  --coral: #FF7D5E;
+  --amber: #FFC53D;
+  --amber-soft: #FFE0A3;
 
   /* --- semantic --------------------------------------------------------- */
-  --ok: #FFB020;          /* success reads warm, per art direction */
+  --ok: #FFC53D;
   --ok-ink: #2A1B04;
-  --nope: #FF5D7A;
-  --focus: #7FD4FF;
+  --nope: #FF6B8A;
+  --focus: #6FE3FF;
 
   /* --- tints ------------------------------------------------------------ */
-  --blue-tint: rgba(62, 123, 250, 0.12);
-  --violet-tint: rgba(124, 92, 255, 0.13);
-  --amber-tint: rgba(255, 176, 32, 0.13);
-  --coral-tint: rgba(255, 107, 74, 0.13);
-  --nope-tint: rgba(255, 93, 122, 0.13);
+  --blue-tint: rgba(76, 141, 255, 0.16);
+  --violet-tint: rgba(155, 123, 255, 0.17);
+  --cyan-tint: rgba(47, 227, 245, 0.14);
+  --amber-tint: rgba(255, 197, 61, 0.16);
+  --coral-tint: rgba(255, 125, 94, 0.16);
+  --nope-tint: rgba(255, 107, 138, 0.16);
+
+  /* --- glows (used on hover / active states) ---------------------------- */
+  --glow-blue: 0 0 0 1px rgba(76, 141, 255, 0.45), 0 8px 30px -8px rgba(76, 141, 255, 0.55);
+  --glow-amber: 0 0 0 1px rgba(255, 197, 61, 0.5), 0 8px 30px -8px rgba(255, 197, 61, 0.55);
+  --glow-violet: 0 0 0 1px rgba(155, 123, 255, 0.45), 0 8px 30px -8px rgba(155, 123, 255, 0.5);
+  --glow-cyan: 0 0 0 1px rgba(47, 227, 245, 0.4), 0 8px 30px -8px rgba(47, 227, 245, 0.45);
 
   /* --- typography ------------------------------------------------------- */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
@@ -52,7 +61,6 @@
   --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
     "Songti SC", "Noto Serif SC", serif;
 
-  /* modular scale, 1.25 ratio, fluid */
   --t-xs: 0.78rem;
   --t-sm: 0.875rem;
   --t-base: 1rem;
@@ -85,13 +93,13 @@
   --gutter: clamp(1.15rem, 4vw, 3rem);
   --measure: 62ch;
 
-  /* --- radii (moderate, never pill-everything) -------------------------- */
+  /* --- radii ------------------------------------------------------------ */
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 16px;
   --r-pill: 999px;
 
-  /* --- shadows (discreet) ----------------------------------------------- */
+  /* --- shadows ---------------------------------------------------------- */
   --sh-1: 0 1px 2px rgba(0, 0, 0, 0.35);
   --sh-2: 0 8px 22px -12px rgba(0, 0, 0, 0.6);
   --sh-3: 0 20px 44px -24px rgba(0, 0, 0, 0.75);
@@ -107,40 +115,49 @@
   --nav-h: 62px;
 }
 
-/* Light theme: an alternate, deliberately-designed daylight ground.
-   Not an inversion — the warm accents shift so they stay legible on paper. */
+/* Light theme: a daylight ground with the same energy.
+   Accents are darkened just enough to stay readable on paper. */
 :root[data-theme="light"] {
-  --ink-900: #F2F4FA;
-  --ink-850: #F7F8FC;
+  --ink-900: #EEF2FD;
+  --ink-850: #F6F8FE;
   --ink-800: #FFFFFF;
   --ink-700: #FFFFFF;
-  --ink-600: #F1F4FB;
-  --ink-500: #E5EAF6;
+  --ink-600: #EFF4FF;
+  --ink-500: #E1E9FB;
 
-  --paper: #101A31;
-  --paper-dim: #2C3A57;
-  --muted: #5A6580;
+  --paper: #0D1730;
+  --paper-dim: #26355A;
+  --muted: #556180;
   --muted-deep: #8E9CBE55;
 
-  --rule: #DBE2F0;
-  --rule-soft: #E8EDF7;
+  --rule: #D3DEF5;
+  --rule-soft: #E6ECFA;
 
-  --blue: #2456D8;
-  --blue-bright: #1D4ED8;
-  --violet: #5B45D6;
-  --coral: #D9421F;
-  --amber: #B26A00;
-  --amber-soft: #7A4A00;
-  --ok: #B26A00;
+  --blue: #1F5FE0;
+  --blue-bright: #1450C8;
+  --blue-deep: #0F3FA8;
+  --violet: #6D4BE8;
+  --cyan: #0E9DB4;
+  --pink: #D6357E;
+  --coral: #D8451F;
+  --amber: #A96A00;
+  --amber-soft: #6E4400;
+  --ok: #A96A00;
   --ok-ink: #FFF6E6;
-  --nope: #C8203F;
+  --nope: #C41F42;
   --focus: #0B63C4;
 
-  --blue-tint: rgba(36, 86, 216, 0.1);
-  --violet-tint: rgba(91, 69, 214, 0.1);
-  --amber-tint: rgba(178, 106, 0, 0.12);
-  --coral-tint: rgba(217, 66, 31, 0.1);
-  --nope-tint: rgba(200, 32, 63, 0.1);
+  --blue-tint: rgba(31, 95, 224, 0.11);
+  --violet-tint: rgba(109, 75, 232, 0.11);
+  --cyan-tint: rgba(14, 157, 180, 0.12);
+  --amber-tint: rgba(169, 106, 0, 0.13);
+  --coral-tint: rgba(216, 69, 31, 0.11);
+  --nope-tint: rgba(196, 31, 66, 0.11);
+
+  --glow-blue: 0 0 0 1px rgba(31, 95, 224, 0.4), 0 10px 28px -10px rgba(31, 95, 224, 0.4);
+  --glow-amber: 0 0 0 1px rgba(169, 106, 0, 0.42), 0 10px 28px -10px rgba(169, 106, 0, 0.4);
+  --glow-violet: 0 0 0 1px rgba(109, 75, 232, 0.4), 0 10px 28px -10px rgba(109, 75, 232, 0.38);
+  --glow-cyan: 0 0 0 1px rgba(14, 157, 180, 0.4), 0 10px 28px -10px rgba(14, 157, 180, 0.38);
 
   --sh-2: 0 8px 22px -14px rgba(16, 26, 49, 0.35);
   --sh-3: 0 20px 44px -26px rgba(16, 26, 49, 0.4);
