@@ -1,0 +1,320 @@
+/* ==========================================================================
+   Mini-games — shared shell, progress meter, and the four game surfaces
+   ========================================================================== */
+
+.arena { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: clamp(1.5rem, 3.5vw, 3rem); align-items: start; }
+
+@media (max-width: 940px) { .arena { grid-template-columns: 1fr; } }
+
+/* --- game shell ---------------------------------------------------------- */
+.game {
+  background: var(--ink-700);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+  overflow: hidden;
+}
+
+.game__tabs {
+  display: flex;
+  gap: 2px;
+  padding: var(--s-3);
+  background: var(--ink-800);
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tab {
+  font: inherit;
+  font-size: var(--t-xs);
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  padding: 0.65em 0.95em;
+  min-height: 40px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: color var(--d-fast) linear, background var(--d-fast) linear;
+}
+
+.tab:hover { color: var(--paper-dim); }
+
+.tab[aria-selected="true"] {
+  color: var(--paper);
+  background: var(--ink-600);
+  border-color: var(--rule);
+}
+
+.tab i {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.45;
+  flex: none;
+}
+
+.tab[aria-selected="true"] i { background: var(--amber); opacity: 1; }
+
+.game__body { padding: clamp(1.25rem, 3vw, 2rem); min-height: 340px; display: grid; align-content: start; gap: var(--s-5); }
+
+.game__head { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: baseline; justify-content: space-between; }
+.game__title { font-size: var(--t-lg); }
+.game__hint { font-size: var(--t-xs); color: var(--muted); }
+
+.game__meta { display: flex; gap: var(--s-4); font-size: var(--t-xs); color: var(--muted); }
+.game__meta b { color: var(--paper); font-weight: 650; }
+
+.game__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
+
+/* feedback region (aria-live) */
+.verdict {
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  border: 1px solid var(--rule);
+  background: var(--ink-800);
+  display: none;
+  gap: 0.3rem;
+}
+
+.verdict.is-shown { display: grid; }
+.verdict.is-ok { border-color: color-mix(in srgb, var(--amber) 50%, transparent); background: var(--amber-tint); }
+.verdict.is-no { border-color: color-mix(in srgb, var(--nope) 45%, transparent); background: var(--nope-tint); }
+
+.verdict__k { font-size: var(--t-xs); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.verdict.is-ok .verdict__k { color: var(--amber); }
+.verdict.is-no .verdict__k { color: var(--nope); }
+.verdict p { font-size: var(--t-sm); color: var(--paper-dim); }
+.verdict .en { color: var(--paper); }
+
+/* --- 1. sentence builder ------------------------------------------------- */
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  align-items: center;
+  min-height: 72px;
+  padding: var(--s-4);
+  border: 1px dashed var(--rule);
+  border-radius: var(--r-md);
+  background: var(--ink-800);
+}
+
+.slots__hint { color: var(--muted); font-size: var(--t-sm); }
+
+.bank { display: flex; flex-wrap: wrap; gap: var(--s-2); min-height: 48px; }
+
+.tile {
+  font: inherit;
+  font-family: var(--font-serif);
+  font-size: var(--t-md);
+  color: var(--paper);
+  background: var(--ink-600);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  padding: 0.5em 0.9em;
+  min-height: 44px;
+  cursor: pointer;
+  transition: transform var(--d-fast) var(--ease-out), border-color var(--d-fast) linear,
+    background var(--d-fast) linear, opacity var(--d-fast) linear;
+}
+
+.tile:hover:not([disabled]) { border-color: var(--blue); transform: translateY(-2px); }
+.tile:active:not([disabled]) { transform: translateY(0) scale(0.96); }
+.tile[disabled] { opacity: 0; pointer-events: none; }
+
+.tile--placed { background: var(--ink-500); border-color: var(--blue); }
+.tile.is-correct { border-color: var(--amber); background: var(--amber-tint); }
+.tile.is-wrong { border-color: var(--nope); background: var(--nope-tint); animation: nudge 380ms var(--ease-out); }
+
+@keyframes nudge {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+}
+
+.builder__zh { font-size: var(--t-sm); color: var(--muted); }
+
+/* --- 2. multiple choice / 3. vocabulary --------------------------------- */
+.prompt {
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-5);
+  border-radius: var(--r-md);
+  background: var(--ink-800);
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--blue);
+}
+
+.prompt__who { font-size: var(--t-xs); letter-spacing: 0.16em; text-transform: uppercase; color: var(--blue-bright); font-weight: 700; }
+.prompt__say { font-family: var(--font-serif); font-size: var(--t-lg); color: var(--paper); line-height: 1.4; }
+.prompt__zh { font-size: var(--t-sm); color: var(--muted); }
+
+.word-card {
+  display: grid;
+  gap: var(--s-2);
+  justify-items: center;
+  text-align: center;
+  padding: var(--s-6) var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--ink-800);
+  border: 1px solid var(--rule);
+}
+
+.word-card__en { font-family: var(--font-serif); font-size: var(--t-2xl); color: var(--paper); line-height: 1; }
+.word-card__ipa { font-size: var(--t-sm); }
+
+.options { display: grid; gap: var(--s-3); }
+.options--grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+.option {
+  font: inherit;
+  font-size: var(--t-sm);
+  text-align: left;
+  color: var(--paper);
+  background: var(--ink-600);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  min-height: 52px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: center;
+  transition: border-color var(--d-fast) linear, background var(--d-fast) linear,
+    transform var(--d-fast) var(--ease-out);
+}
+
+.option:hover:not([disabled]) { border-color: var(--blue); transform: translateY(-1px); }
+.option[disabled] { cursor: default; }
+
+.option__key {
+  font-family: var(--font-serif);
+  font-size: var(--t-sm);
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-sm);
+  width: 22px; height: 22px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.option .en { font-size: var(--t-md); }
+
+.option.is-right { border-color: var(--amber); background: var(--amber-tint); }
+.option.is-right .option__key { color: var(--amber); border-color: var(--amber); }
+.option.is-wrong { border-color: var(--nope); background: var(--nope-tint); }
+.option.is-faded { opacity: 0.4; }
+
+/* progress dots for a quiz run */
+.pips { display: flex; gap: 5px; align-items: center; }
+.pips i { width: 18px; height: 3px; border-radius: 2px; background: var(--rule); transition: background var(--d-base) linear; }
+.pips i.is-done { background: var(--blue); }
+.pips i.is-right { background: var(--amber); }
+.pips i.is-wrong { background: var(--nope); }
+
+/* timer bar for vocabulary rush */
+.timer { height: 4px; border-radius: 2px; background: var(--rule); overflow: hidden; }
+
+.timer i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--blue);
+  transform-origin: left;
+  transform: scaleX(var(--t, 1));
+  transition: background var(--d-base) linear;
+}
+
+.timer.is-low i { background: var(--coral); }
+
+/* --- 4. listening -------------------------------------------------------- */
+.listen { display: grid; gap: var(--s-5); justify-items: start; }
+
+.listen__wave { width: 100%; height: 64px; display: block; }
+
+.cloze {
+  font-family: var(--font-serif);
+  font-size: var(--t-lg);
+  color: var(--paper);
+  line-height: 1.6;
+}
+
+.cloze b {
+  display: inline-block;
+  min-width: 4.5em;
+  border-bottom: 2px solid var(--amber);
+  text-align: center;
+  color: var(--amber);
+  font-weight: 400;
+}
+
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.speak-btn svg { width: 16px; height: 16px; }
+.speak-btn path { fill: currentColor; }
+
+.no-tts { font-size: var(--t-xs); color: var(--muted); }
+
+/* --- gamification rail --------------------------------------------------- */
+.rail {
+  background: var(--ink-800);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  padding: var(--s-5);
+  display: grid;
+  gap: var(--s-5);
+  position: sticky;
+  top: calc(var(--nav-h) + var(--s-5));
+}
+
+.rail__title { font-size: var(--t-xs); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+
+.score { display: flex; align-items: baseline; gap: var(--s-3); }
+.score__n { font-family: var(--font-serif); font-size: var(--t-3xl); line-height: 1; color: var(--paper); }
+.score__u { font-size: var(--t-xs); color: var(--muted); letter-spacing: 0.1em; }
+
+.rail__row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); font-size: var(--t-sm); color: var(--muted); }
+.rail__row b { color: var(--paper); font-weight: 650; }
+
+.stars { display: flex; gap: 4px; }
+
+.stars i {
+  width: 14px; height: 14px;
+  display: block;
+  background: var(--rule);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  transition: background var(--d-base) linear, transform var(--d-base) var(--ease-spring);
+}
+
+.stars i.is-lit { background: var(--amber); }
+
+.bar { height: 5px; border-radius: 3px; background: var(--rule); overflow: hidden; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--amber)); transform: scaleX(var(--v, 0)); transform-origin: left; transition: transform 600ms var(--ease-out); }
+
+.rail__msg { font-size: var(--t-sm); color: var(--paper-dim); min-height: 3em; }
+
+@media (max-width: 940px) { .rail { position: static; } }
+
+/* --- reward particles (transform/opacity only, auto-removed) ------------- */
+.spark {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 120;
+  will-change: transform, opacity;
+}

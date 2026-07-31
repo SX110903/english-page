@@ -1,0 +1,10 @@
+# Vercel
+.vercel
+
+# Dependencies (this project has none, but keep it safe)
+node_modules
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store
