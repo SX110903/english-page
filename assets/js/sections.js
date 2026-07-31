@@ -58,31 +58,48 @@
     update();
   }
 
-  /* ---------- trust marquee ---------------------------------------------- */
+  /* ---------- trust marquee ----------------------------------------------
+     This one keeps scrolling even when the system asks for reduced motion:
+     it is a deliberate, explicit choice by the site owner. To stay usable it
+     runs slower in that case and pauses whenever the pointer or keyboard
+     focus is on it, so the text can always be read.                        */
   function initMarquee() {
     var track = C.$('#stripTrack');
     if (!track) return;
 
+    var strip = track.parentNode;
+
     /* duplicate once so the loop is seamless */
     track.innerHTML += track.innerHTML;
 
-    if (!C.motion.enabled) { track.style.transform = 'none'; return; }
-
     var x = 0;
     var half = 0;
+    var paused = false;
 
     function measure() { half = track.scrollWidth / 2; }
     measure();
     window.addEventListener('resize', measure, { passive: true });
 
+    /* gentler pace when the user prefers reduced motion */
+    function speed() { return C.motion.enabled ? 0.55 : 0.25; }
+
     function loop() {
-      x -= 0.35;
+      if (paused) return;
+      x -= speed();
       if (half && -x >= half) x += half;
       track.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
     }
 
+    function pause() { paused = true; }
+    function resume() { paused = false; }
+
+    strip.addEventListener('pointerenter', pause);
+    strip.addEventListener('pointerleave', resume);
+    strip.addEventListener('focusin', pause);
+    strip.addEventListener('focusout', resume);
+
     var stop = null;
-    C.onScreen(track.parentNode,
+    C.onScreen(strip,
       function () { if (!stop) stop = C.addTask(loop); },
       function () { if (stop) { stop(); stop = null; } });
   }
