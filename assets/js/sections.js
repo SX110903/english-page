@@ -328,8 +328,17 @@
     var ph = C.$('#qrPh');
     if (!img || !ph) return;
 
-    function ok() { ph.style.display = 'none'; img.style.display = 'block'; }
-    function fail() { img.style.display = 'none'; ph.style.display = 'grid'; }
+    function ok() {
+      ph.style.display = 'none';
+      img.style.display = 'block';
+      img.parentNode.classList.add('has-qr');
+    }
+
+    function fail() {
+      img.style.display = 'none';
+      ph.style.display = 'grid';
+      img.parentNode.classList.remove('has-qr');
+    }
 
     if (img.complete) { img.naturalWidth > 0 ? ok() : fail(); }
     img.addEventListener('load', ok);

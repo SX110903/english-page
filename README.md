@@ -8,15 +8,18 @@ minijuegos educativos y formulario de prueba gratuita.
 
 ---
 
-## 📌 Antes de publicar: añade el QR
+## 📌 El QR de WeChat
 
-La web muestra el QR de WeChat desde un archivo llamado **`wechat_qr.png`**.
+El QR ya está incluido: **`wechat_qr.png`** (la tarjeta de contacto de WeChat, 820×1225).
 
-1. Guarda la imagen del QR en la **raíz del proyecto** (junto a `index.html`).
-2. El nombre debe ser exactamente **`wechat_qr.png`**.
+Para cambiarlo, sustituye ese archivo. El marco se adapta solo a la proporción de
+la imagen; si además cambian sus dimensiones, actualiza dos sitios:
 
-Si el archivo no está, la web detecta el fallo y muestra un marco con instrucciones
-en su lugar — nunca aparece una imagen rota.
+- `index.html` → atributos `width` / `height` de `#qrImg` (evita saltos de layout)
+- `assets/css/sections.css` → `aspect-ratio` de `.qr.has-qr`
+
+Si el archivo faltara, la web lo detecta y muestra un marco con instrucciones en su
+lugar — nunca aparece una imagen rota.
 
 El WeChat ID (`wxid_qqmcz57ebybf22`) está en `index.html`; búscalo para cambiarlo.
 
@@ -27,7 +30,7 @@ El WeChat ID (`wxid_qqmcz57ebybf22`) está en `index.html`; búscalo para cambia
 ```
 english-tutor-web/
 ├─ index.html                 Documento único: todo el contenido rastreable
-├─ wechat_qr.png              ← AÑADIR TÚ
+├─ wechat_qr.png              QR de contacto de WeChat
 └─ assets/
    ├─ css/
    │  ├─ tokens.css           Design system: color, escala tipográfica, espacio, motion
